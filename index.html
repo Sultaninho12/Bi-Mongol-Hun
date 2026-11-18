@@ -150,7 +150,7 @@ for(i=0;i<p.length;i++)h.push({w:p[i],s:Math.random()-(S.bad[p[i].id]||0)*.4+(S.
 h.sort(function(x,y){return x.s-y.s});for(i=0;i<h.length;i++)ord.push(h[i].w);
 if(m==4){ord=[];for(i=0;i<p.length;i++)if(S.bad[p[i].id]>0)ord.push(p[i]);if(!ord.length){toast('Noch keine schwierigen Wörter – spiel erst eine Runde!');return}ord=shuf(ord)}
 Q={on:true,m:m==4?1:m,n:0,ok:0,sc:0,st:0,lv:3,p:p,set:ord.slice(0,m==3?ord.length:10)};qNext()}
-function qNext(){clearInterval(tm);Q.lock=0;if(Q.n>=Q.set.length||(Q.m==3&&Q.lv<=0)){Q.on=false;S.rounds++;save();var cent=Q.sc/10;$('quiz').innerHTML='<div class="card c"><div style="font-size:48px">'+(Q.ok>=8||Q.m==3&&Q.ok>=10?'🏆':Q.ok>=5?'👍':'💪')+'</div><div class="big">'+Q.ok+' richtig</div><div class="big" style="color:#ff9f1c">+'+Q.sc+' Punkte ('+cent+' Cent)</div></div><button class="btn" id="ag">Nochmal</button>';$('ag').onclick=qMenu;return}
+function qNext(){clearInterval(tm);Q.lock=0;if(Q.n>=Q.set.length||(Q.m==3&&Q.lv<=0)){Q.on=false;S.rounds++;save();var cent=Q.sc/1;$('quiz').innerHTML='<div class="card c"><div style="font-size:48px">'+(Q.ok>=8||Q.m==3&&Q.ok>=10?'🏆':Q.ok>=5?'👍':'💪')+'</div><div class="big">'+Q.ok+' richtig</div><div class="big" style="color:#ff9f1c">+'+Q.sc+' Punkte ('+cent+' Cent)</div></div><button class="btn" id="ag">Nochmal</button>';$('ag').onclick=qMenu;return}
 var w=Q.set[Q.n],dir=Math.random()<.5?1:2,o=[w],seen={},k=shuf(Q.p),c,i;seen[dir==1?w.m:w.d]=1;
 for(i=0;i<k.length&&o.length<4;i++){c=dir==1?k[i].m:k[i].d;if(!seen[c]){seen[c]=1;o.push(k[i])}}
 Q.w=w;Q.o=shuf(o);var hs='';if(Q.m==3)for(i=0;i<3;i++)hs+=i<Q.lv?'❤️':'🖤';

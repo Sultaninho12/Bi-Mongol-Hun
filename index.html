@@ -66,7 +66,7 @@ var NM={hair:['Kurz','Zöpfe','Dutt','Lang'],deel:['Цэнхэр Дээл','Ул
 var LB={hair:'💇 Haare',deel:'👘 Дээл (Tracht)',hat:'🎩 Kopfbedeckung',boots:'👢 Schuhe',acc:'💎 Accessoires'};
 var DC=['#2b7de9','#c62828','#2e7d32','#d99a00','#6a1b9a'],BC=['#6d4c41','#222','#b71c1c','#c9a227'],SK=['#f6d5b5','#e8b88f','#c68e63'];
 function ul(){var n=0,k,j;for(k in REQ)for(j=0;j<REQ[k].length;j++)if(S.pts>=REQ[k][j])n++;return n}
-function hdr(){$('hp').innerHTML='⭐ '+S.pts+' · 💰 '+(S.pts/1000).toFixed(2).replace('.',',')+' €'}
+function hdr(){$('hp').innerHTML='⭐ '+S.pts+' · 💰 '+(S.pts/800).toFixed(2).replace('.',',')+' €'}
 function addPts(n){var b=ul();S.pts+=n;hdr();if(ul()>b)toast('🎁 Neues Avatar-Teil freigeschaltet!')}
 function mark(id){var c=S.ok[id]||0;S.ok[id]=c+1;if(c==1){addPts(1);toast('🎓 Neues Wort gelernt! +100 Punkte (1 Cent)');return true}return false}
 hdr();

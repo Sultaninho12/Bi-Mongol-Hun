@@ -68,7 +68,7 @@ var DC=['#2b7de9','#c62828','#2e7d32','#d99a00','#6a1b9a'],BC=['#6d4c41','#222',
 function ul(){var n=0,k,j;for(k in REQ)for(j=0;j<REQ[k].length;j++)if(S.pts>=REQ[k][j])n++;return n}
 function hdr(){$('hp').innerHTML='⭐ '+S.pts+' · 💰 '+(S.pts/100).toFixed(2).replace('.',',')+' €'}
 function addPts(n){var b=ul();S.pts+=n;hdr();if(ul()>b)toast('🎁 Neues Avatar-Teil freigeschaltet!')}
-function mark(id){var c=S.ok[id]||0;S.ok[id]=c+1;if(c==1){addPts(10);toast('🎓 Neues Wort gelernt! +10 Punkte (10 Cent)');return true}return false}
+function mark(id){var c=S.ok[id]||0;S.ok[id]=c+1;if(c==1){addPts(10);toast('🎓 Neues Wort gelernt! +1000 Punkte (10 Cent)');return true}return false}
 hdr();
 function av(a,h){var d=DC[a.deel],s=SK[a.skin],B=BC[a.boots],H='#1b1b1b',i,x='<svg viewBox="0 -14 120 196" height="'+h+'" xmlns="http://www.w3.org/2000/svg">';
 x+='<g fill="'+B+'"><path d="M30 160h24v12c0 4-3 6-8 6H30c-4 0-6-3-3-6z"/><path d="M90 160H66v12c0 4 3 6 8 6h16c4 0 6-3 3-6z"/></g>';

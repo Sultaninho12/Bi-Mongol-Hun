@@ -2,7 +2,7 @@
 <html lang="de"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="БИ МОНГОЛ ХҮН">
+<meta name="apple-mobile-web-app-title" content="БИ МОНГОЛ ХҮН" Энхжингоо охиндоо зориулав>
 <meta name="theme-color" content="#2b7de9">
 <link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png">
 <title>БИ МОНГОЛ ХҮН</title>
@@ -62,8 +62,8 @@ function fill(id){var h='<option value="-1">Alle Kategorien ('+W.length+')</opti
 fill('cat0');fill('cat1');fill('cat2');
 /* Avatar-Daten */
 var REQ={hair:[0,150,400,800],deel:[0,100,250,600,1200],hat:[0,200,500,1000],boots:[0,120,450,1500],acc:[0,100,300,700,1400]};
-var NM={hair:['Kurz','Zöpfe','Dutt','Lang'],deel:['Blauer Деел','Roter Деел','Grüner Деел','Goldseide','Königsviolett'],hat:['Kein Hut','Малгай','Pelzmütze','Festhut'],boots:['Гутал braun','Гутал schwarz','Гутал rot','Гутал gold'],acc:['Keins','Хадаг (Schal)','Ohrringe','Gürtelmesser','Соёмбо-Kette']};
-var LB={hair:'💇 Haare',deel:'👘 Деел (Tracht)',hat:'🎩 Kopfbedeckung',boots:'👢 Schuhe',acc:'💎 Accessoires'};
+var NM={hair:['Kurz','Zöpfe','Dutt','Lang'],deel:['Цэнхэр Дээл','Улаан Дээл','Ногоон Дээл','Goldseide','Königsviolett'],hat:['Kein Hut','Малгай','Pelzmütze','Festhut'],boots:['Гутал бор','Гутал хар','Гутал улаан','Гутал алтан'],acc:['Keins','Хадаг (Schal)','Ohrringe','Gürtelmesser','Соёмбо-Kette']};
+var LB={hair:'💇 Haare',deel:'👘 Дээл (Tracht)',hat:'🎩 Kopfbedeckung',boots:'👢 Schuhe',acc:'💎 Accessoires'};
 var DC=['#2b7de9','#c62828','#2e7d32','#d99a00','#6a1b9a'],BC=['#6d4c41','#222','#b71c1c','#c9a227'],SK=['#f6d5b5','#e8b88f','#c68e63'];
 function ul(){var n=0,k,j;for(k in REQ)for(j=0;j<REQ[k].length;j++)if(S.pts>=REQ[k][j])n++;return n}
 function hdr(){$('hp').innerHTML='⭐ '+S.pts+' · 💰 '+(S.pts/100).toFixed(2).replace('.',',')+' €'}

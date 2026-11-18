@@ -143,24 +143,24 @@ $('rt').onclick=function(){$('bx').innerHTML='<textarea id="bt" rows="4" style="
 $('rs').onclick=function(){if(confirm('Alle Punkte löschen?')){S={pts:0,best:0,ok:{},rounds:0,bad:{},day:'',ds:0,av:{skin:0,hair:0,deel:0,hat:0,boots:0,acc:0}};save();hdr();stats()}}}
 /* Quiz */
 var Q={on:false},tm=null;
-function qMenu(){clearInterval(tm);Q.on=false;$('quiz').innerHTML='<div class="card c"><div style="font-size:46px">⭐</div><p>Punkte, Serien-Boni &amp; <b>+1</b> für jedes neu gelernte Wort!</p></div><button class="btn" data-m="1">⭐ Klassik · 10 Fragen</button><button class="btn o" data-m="2">⏱ Zeitduell · 12 Sek. pro Frage</button><button class="btn r" data-m="3">❤️ Überleben · 3 Leben, endlos</button><button class="btn g" data-m="4">🔁 Schwierige Wörter üben</button>'}
+function qMenu(){clearInterval(tm);Q.on=false;$('quiz').innerHTML='<div class="card c"><div style="font-size:46px">⭐</div><p><b>10 Punkte (1 Cent)</b> pro richtige Antwort &amp; <b>+1</b> für jedes neu gelernte Wort!</p></div><button class="btn" data-m="1">⭐ Klassik · 10 Fragen</button><button class="btn o" data-m="2">⏱ Zeitduell · 12 Sek. pro Frage</button><button class="btn r" data-m="3">❤️ Überleben · 3 Leben, endlos</button><button class="btn g" data-m="4">🔁 Schwierige Wörter üben</button>'}
 $('quiz').onclick=function(e){var t=e.target,m=t.getAttribute&&t.getAttribute('data-m');if(m)qStart(+m);var o=t.getAttribute&&t.getAttribute('data-o');if(o!=null)qAns(+o)};
 function qStart(m){var p=pool($('cat1').value),h=[],i,ord=[];if(p.length<4){alert('Zu wenige Wörter');return}
 for(i=0;i<p.length;i++)h.push({w:p[i],s:Math.random()-(S.bad[p[i].id]||0)*.4+(S.ok[p[i].id]||0)*.15});
 h.sort(function(x,y){return x.s-y.s});for(i=0;i<h.length;i++)ord.push(h[i].w);
 if(m==4){ord=[];for(i=0;i<p.length;i++)if(S.bad[p[i].id]>0)ord.push(p[i]);if(!ord.length){toast('Noch keine schwierigen Wörter – spiel erst eine Runde!');return}ord=shuf(ord)}
 Q={on:true,m:m==4?1:m,n:0,ok:0,sc:0,st:0,lv:3,p:p,set:ord.slice(0,m==3?ord.length:10)};qNext()}
-function qNext(){clearInterval(tm);Q.lock=0;if(Q.n>=Q.set.length||(Q.m==3&&Q.lv<=0)){Q.on=false;S.rounds++;save();$('quiz').innerHTML='<div class="card c"><div style="font-size:48px">'+(Q.ok>=8||Q.m==3&&Q.ok>=10?'🏆':Q.ok>=5?'👍':'💪')+'</div><div class="big">'+Q.ok+' richtig</div><div class="big" style="color:#ff9f1c">+'+Q.sc+' Punkte</div></div><button class="btn" id="ag">Nochmal</button>';$('ag').onclick=qMenu;return}
+function qNext(){clearInterval(tm);Q.lock=0;if(Q.n>=Q.set.length||(Q.m==3&&Q.lv<=0)){Q.on=false;S.rounds++;save();var cent=Q.sc/10;$('quiz').innerHTML='<div class="card c"><div style="font-size:48px">'+(Q.ok>=8||Q.m==3&&Q.ok>=10?'🏆':Q.ok>=5?'👍':'💪')+'</div><div class="big">'+Q.ok+' richtig</div><div class="big" style="color:#ff9f1c">+'+Q.sc+' Punkte ('+cent+' Cent)</div></div><button class="btn" id="ag">Nochmal</button>';$('ag').onclick=qMenu;return}
 var w=Q.set[Q.n],dir=Math.random()<.5?1:2,o=[w],seen={},k=shuf(Q.p),c,i;seen[dir==1?w.m:w.d]=1;
 for(i=0;i<k.length&&o.length<4;i++){c=dir==1?k[i].m:k[i].d;if(!seen[c]){seen[c]=1;o.push(k[i])}}
 Q.w=w;Q.o=shuf(o);var hs='';if(Q.m==3)for(i=0;i<3;i++)hs+=i<Q.lv?'❤️':'🖤';
-var h='<div class="c">'+(Q.m==3?hs+' · ':'Frage '+(Q.n+1)+'/'+Q.set.length+' · ')+'🔥 '+Q.st+' · ⭐ '+Q.sc+'</div>'+(Q.m==2?'<div class="bar"><i id="tb" style="width:100%;background:#ff9f1c"></i></div>':'')+'<div class="card c"><div class="big">'+(dir==1?w.i+' '+esc(w.d):esc(w.m))+'</div><div class="ph">'+(dir==1?'Was heißt das auf Mongolisch?':'Was heißt das auf Deutsch?')+'</div></div>';
+var h='<div class="c">'+(Q.m==3?hs+' · ':'Frage '+(Q.n+1)+'/'+Q.set.length+' · ')+'🔥 '+Q.st+' · ⭐ '+Q.sc+' ('+(Q.sc/10)+' Cent)</div>'+(Q.m==2?'<div class="bar"><i id="tb" style="width:100%;background:#ff9f1c"></i></div>':'')+'<div class="card c"><div class="big">'+(dir==1?w.i+' '+esc(w.d):esc(w.m))+'</div><div class="ph">'+(dir==1?'Was heißt das auf Mongolisch?':'Was heißt das auf Deutsch?')+'</div></div>';
 for(i=0;i<Q.o.length;i++)h+='<button class="opt" data-o="'+i+'">'+esc(dir==1?Q.o[i].m:Q.o[i].d)+'</button>';
 $('quiz').innerHTML=h;
 if(Q.m==2){Q.t=12000;Q.t0=Date.now();tm=setInterval(function(){var r=Q.t-(Date.now()-Q.t0),b=$('tb');if(b)b.style.width=Math.max(0,r/Q.t*100)+'%';if(r<=0)qAns(-1)},100)}}
 function qAns(i){if(Q.lock)return;Q.lock=1;clearInterval(tm);var w=Q.w,ok=i>=0&&Q.o[i]===w,bs=$('quiz').getElementsByClassName('opt'),j;
 for(j=0;j<bs.length;j++)if(Q.o[j]===w)bs[j].className='opt ok';
-if(ok){Q.st++;Q.ok++;if(S.bad[w.id]>0)S.bad[w.id]--;var g=10+Math.min(Q.st-1,5)*2;if(Q.m==2)g+=Math.ceil(Math.max(0,Q.t-(Date.now()-Q.t0))/3000);Q.sc+=g;addPts(g);if(Q.st>S.best)S.best=Q.st;if(!mark(w.id)&&(Q.st==3||Q.st==5||Q.st==10))toast('🔥 '+Q.st+'er Serie!');vib(30)}
+if(ok){Q.st++;Q.ok++;if(S.bad[w.id]>0)S.bad[w.id]--;var g=10;Q.sc+=g;addPts(g);if(Q.st>S.best)S.best=Q.st;if(!mark(w.id)&&(Q.st==3||Q.st==5||Q.st==10))toast('🔥 '+Q.st+'er Serie!');vib(30)}
 else{if(i>=0)bs[i].className='opt no';S.bad[w.id]=(S.bad[w.id]||0)+1;Q.st=0;if(Q.m==3)Q.lv--;vib([80,40,80])}
 save();Q.n++;setTimeout(qNext,ok?650:1500)}
 /* Schreiben */

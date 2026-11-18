@@ -166,10 +166,10 @@ save();Q.n++;setTimeout(qNext,ok?650:1500)}
 /* Schreiben */
 var cur=null,gx,cx,dr=false,guide=true,hand=false,CH=230;
 function nextW(){var p=pool($('cat2').value);cur=p[Math.floor(Math.random()*p.length)];
-$('wr').innerHTML='<div class="card c"><div class="de">'+cur.i+' '+esc(cur.d)+' <span class="sp" data-i="'+cur.id+'" data-l="de">🔊</span> <span class="sp" data-i="'+cur.id+'" data-l="mn">🇲🇳</span><span class="sp" data-i="'+cur.id+'" data-l="rec">'+(REC[cur.id]?'🎙️':'🎤')+'</span></div><div class="ph">'+esc(cur.p)+'</div></div><div class="cw" id="cw"><canvas id="gc"></canvas><canvas id="cv"></canvas></div><div class="row"><button class="btn l" id="cl">🧽 Löschen</button><button class="btn o" id="gd"></button><button class="btn" id="ft"></button></div><div class="row"><button class="btn g" id="ok">✔ Richtig (+5)</button><button class="btn r" id="no">✖ Nochmal</button></div><button class="btn" id="nx">Nächstes Wort ›</button>';
+$('wr').innerHTML='<div class="card c"><div class="de">'+cur.i+' '+esc(cur.d)+' <span class="sp" data-i="'+cur.id+'" data-l="de">🔊</span> <span class="sp" data-i="'+cur.id+'" data-l="mn">🇲🇳</span><span class="sp" data-i="'+cur.id+'" data-l="rec">'+(REC[cur.id]?'🎙️':'🎤')+'</span></div><div class="ph">'+esc(cur.p)+'</div></div><div class="cw" id="cw"><canvas id="gc"></canvas><canvas id="cv"></canvas></div><div class="row"><button class="btn l" id="cl">🧽 Löschen</button><button class="btn o" id="gd"></button><button class="btn" id="ft"></button></div><div class="row"><button class="btn g" id="ok">✔ Richtig (+1)</button><button class="btn r" id="no">✖ Nochmal</button></div><button class="btn" id="nx">Nächstes Wort ›</button>';
 var cv=$('cv'),gc=$('gc'),d=window.devicePixelRatio||1,w=$('cw').clientWidth;
 gc.width=cv.width=w*d;gc.height=cv.height=CH*d;gx=gc.getContext('2d');cx=cv.getContext('2d');gx.scale(d,d);cx.scale(d,d);
-cx.lineWidth=5;cx.lineCap='round';cx.lineJoin='round';cx.strokeStyle='#1e293b';cur.w=w;btn();drawGuide();
+cx.lineWidth=1;cx.lineCap='round';cx.lineJoin='round';cx.strokeStyle='#1e293b';cur.w=w;btn();drawGuide();
 function pos(e){var t=e.touches?e.touches[0]:e,b=cv.getBoundingClientRect();return[t.clientX-b.left,t.clientY-b.top]}
 function dn(e){e.preventDefault();dr=true;var p=pos(e);cx.beginPath();cx.moveTo(p[0],p[1]);cx.lineTo(p[0]+.1,p[1]);cx.stroke()}
 function mv(e){if(!dr)return;e.preventDefault();var p=pos(e);cx.lineTo(p[0],p[1]);cx.stroke();cx.beginPath();cx.moveTo(p[0],p[1])}
@@ -180,14 +180,14 @@ $('cl').onclick=$('no').onclick=function(){cx.save();cx.setTransform(1,0,0,1,0,0
 $('gd').onclick=function(){guide=!guide;btn();drawGuide()};
 $('ft').onclick=function(){hand=!hand;btn();drawGuide()};
 $('nx').onclick=nextW;
-$('ok').onclick=function(){addPts(5);mark(cur.id);save();nextW()}}
+$('ok').onclick=function(){addPts(1);mark(cur.id);save();nextW()}}
 function btn(){$('gd').innerHTML=guide?'👁 Hilfe aus':'👁 Hilfe an';$('ft').innerHTML=hand?'✒️ Handschrift':'🅰️ Druckschrift'}
 function drawGuide(){var w=cur.w,f=hand?'italic ':'bold ',fam=hand?'"Times New Roman",Georgia,serif':'Helvetica,Arial,sans-serif',s=84;gx.clearRect(0,0,w,CH);if(!guide)return;
 gx.font=f+s+'px '+fam;while(gx.measureText(cur.m).width>w-20&&s>16){s-=4;gx.font=f+s+'px '+fam}
 gx.fillStyle='rgba(43,125,233,.22)';gx.textAlign='center';gx.textBaseline='middle';gx.fillText(cur.m,w/2,CH/2)}
 $('cat2').onchange=nextW;
 function ymd(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
-function daily(){var n=new Date(),d=ymd(n);if(S.day==d)return;S.ds=(S.day==ymd(new Date(n.getTime()-864e5)))?S.ds+1:1;S.day=d;var b=Math.min(S.ds,7)*5;addPts(b);save();toast('📅 Tag '+S.ds+' in Folge! +'+b+' Punkte')}
+function daily(){var n=new Date(),d=ymd(n);if(S.day==d)return;S.ds=(S.day==ymd(new Date(n.getTime()-864e5)))?S.ds+1:1;S.day=d;var b=Math.min(S.ds,7)*1;addPts(b);save();toast('📅 Tag '+S.ds+' in Folge! +'+b+' Punkte')}
 setTimeout(daily,700);
 }
 /*LOADER*/

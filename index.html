@@ -187,7 +187,7 @@ gx.font=f+s+'px '+fam;while(gx.measureText(cur.m).width>w-20&&s>16){s-=4;gx.font
 gx.fillStyle='rgba(43,125,233,.22)';gx.textAlign='center';gx.textBaseline='middle';gx.fillText(cur.m,w/2,CH/2)}
 $('cat2').onchange=nextW;
 function ymd(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
-function daily(){var n=new Date(),d=ymd(n);if(S.day==d)return;S.ds=(S.day==ymd(new Date(n.getTime()-864e5)))?S.ds+1:1;S.day=d;var b=Math.min(S.ds,7)*0,1;addPts(b);save();toast('📅 Tag '+S.ds+' in Folge! +'+b+' Punkte')}
+function daily(){var n=new Date(),d=ymd(n);if(S.day==d)return;S.ds=(S.day==ymd(new Date(n.getTime()-864e5)))?S.ds+1:1;S.day=d;var b=Math.min(S.ds,7)*1;addPts(b);save();toast('📅 Tag '+S.ds+' in Folge! +'+b+' Punkte')}
 setTimeout(daily,700);
 }
 /*LOADER*/

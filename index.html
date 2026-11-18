@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="БИ МОНГОЛ ХҮН">
+<meta name="theme-color" content="#2b7de9">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png">
+<title>БИ МОНГОЛ ХҮН</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;font-family:-apple-system,Helvetica,Arial,sans-serif;background:#f4f8ff;color:#1e293b}
+#app{display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;height:100%}
+header{background:#2b7de9;color:#fff;padding:calc(8px + env(safe-area-inset-top)) 12px 8px;text-align:center;font-weight:800;font-size:19px;cursor:pointer}
+header small{display:block;font-weight:400;font-size:12px;opacity:.95}
+main{-webkit-flex:1;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 10px 10px}
+nav{display:-webkit-flex;display:flex;background:#fff;border-top:1px solid #dbe3ef;padding-bottom:env(safe-area-inset-bottom)}
+nav button{-webkit-flex:1;flex:1;border:0;background:none;padding:7px 0;font-size:10px;font-weight:700;color:#64748b}
+nav button b{display:block;font-size:21px}nav button.on{color:#ff9f1c}
+.v{display:none;padding-top:10px}#v0{padding-top:0}.v.on{display:block}
+.stk{position:-webkit-sticky;position:sticky;top:0;z-index:5;background:#f4f8ff;padding:8px 0 2px}
+.card{background:#fff;border-radius:14px;padding:12px;margin-bottom:8px;border-left:5px solid #2ec4b6;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.de{font-weight:700}.mn{font-weight:800;font-size:19px;color:#2b7de9;margin-top:2px}.ph{font-size:13px;color:#64748b;font-style:italic}
+.sp{display:inline-block;padding:0 6px;font-size:18px}
+select,input{width:100%;padding:12px;border-radius:12px;border:2px solid #cbd5e1;font-size:16px;margin-bottom:8px;background:#fff}
+.btn{display:block;width:100%;padding:14px;border:0;border-radius:12px;background:#2b7de9;color:#fff;font-size:16px;font-weight:800;margin:6px 0}
+.btn.o{background:#ff9f1c}.btn.g{background:#16a34a}.btn.r{background:#dc2626}.btn.l{background:#94a3b8}
+.row{display:-webkit-flex;display:flex}.row .btn{margin-right:6px;padding:12px 4px;font-size:14px}.row .btn:last-child{margin-right:0}
+.opt{display:block;width:100%;text-align:left;padding:14px;margin:6px 0;border-radius:12px;border:2px solid #cbd5e1;background:#fff;font-size:17px;font-weight:700}
+.opt.ok{background:#dcfce7;border-color:#16a34a}.opt.no{background:#fee2e2;border-color:#dc2626}
+.big{font-size:22px;font-weight:800;text-align:center;margin:10px 0}.c{text-align:center}
+.cw{position:relative;height:230px;margin-bottom:6px}.cw canvas{position:absolute;left:0;top:0;width:100%;height:230px;border-radius:14px;display:block}
+#gc{background:#fff;border:2px dashed #94a3b8}#cv{touch-action:none}
+.bar{height:14px;background:#e2e8f0;border-radius:7px;overflow:hidden}.bar i{display:block;height:100%;background:#2ec4b6}
+.chip{display:inline-block;padding:9px 12px;margin:3px;border-radius:20px;border:2px solid #cbd5e1;background:#fff;font-size:14px;font-weight:700}
+.chip.on{border-color:#ff9f1c;background:#fff4e0}.chip.lk{opacity:.5}
+#toast{position:fixed;left:10px;right:10px;bottom:calc(80px + env(safe-area-inset-bottom));background:#1e293b;color:#fff;padding:12px;border-radius:12px;text-align:center;font-weight:700;opacity:0;-webkit-transition:opacity .3s;transition:opacity .3s;pointer-events:none;z-index:9}
+</style></head><body><div id="app">
+<header id="hd">БИ МОНГОЛ ХҮН<small>Ich bin Mongole · <span id="hp"></span></small></header>
+<main id="main">
+<div class="v on" id="v0"><div class="stk"><input id="q" placeholder="🔍 Suchen (Deutsch oder Mongolisch)"><select id="cat0"></select></div><div id="list"></div><button class="btn l" id="more">Mehr anzeigen</button></div>
+<div class="v" id="v1"><select id="cat1"></select><div id="quiz"></div></div>
+<div class="v" id="v2"><select id="cat2"></select><div id="wr"></div></div>
+<div class="v" id="v3"><div id="avv"></div></div>
+<div class="v" id="v4"><div id="pts"></div></div>
+</main>
+<nav id="nav"><button class="on"><b>📚</b>Wörter</button><button><b>⭐</b>Quiz</button><button><b>✍️</b>Schreiben</button><button><b>🧑‍🌾</b>Avatar</button><button><b>🏅</b>Punkte</button></nav>
+</div><div id="toast"></div>
+<script>
+var DATA=null;
+function boot(){
+var CATS=DATA.c,W=[],WM={},i,$=function(x){return document.getElementById(x)};
+for(i=0;i<DATA.w.length;i++){var r=DATA.w[i],w={id:hid(r[2]+'|'+r[3]),c:r[0],i:r[1],d:r[2],m:r[3],p:r[4]};W.push(w);WM[w.id]=w}
+var S={pts:0,best:0,ok:{},rounds:0,bad:{},day:'',ds:0,av:{skin:0,hair:0,deel:0,hat:0,boots:0,acc:0}};
+try{var t=localStorage.getItem('mongol2');if(t){var o=JSON.parse(t);for(var k in o)S[k]=o[k]}}catch(e){}
+function save(){try{localStorage.setItem('mongol2',JSON.stringify(S))}catch(e){}}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=a[i];a[i]=a[j];a[j]=x}return a}
+function pool(c){var o=[];for(var i=0;i<W.length;i++)if(c==='-1'||W[i].c==c)o.push(W[i]);return o}
+function vib(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
+function toast(m){var t=$('toast');t.innerHTML=m;t.style.opacity=1;clearTimeout(toast.h);toast.h=setTimeout(function(){t.style.opacity=0},2600)}
+function fill(id){var h='<option value="-1">Alle Kategorien ('+W.length+')</option>';for(var i=0;i<CATS.length;i++)h+='<option value="'+i+'">'+esc(CATS[i])+' ('+pool(String(i)).length+')</option>';$(id).innerHTML=h}
+fill('cat0');fill('cat1');fill('cat2');
+/* Avatar-Daten */
+var REQ={hair:[0,150,400,800],deel:[0,100,250,600,1200],hat:[0,200,500,1000],boots:[0,120,450,1500],acc:[0,100,300,700,1400]};
+var NM={hair:['Kurz','Zöpfe','Dutt','Lang'],deel:['Blauer Деел','Roter Деел','Grüner Деел','Goldseide','Königsviolett'],hat:['Kein Hut','Малгай','Pelzmütze','Festhut'],boots:['Гутал braun','Гутал schwarz','Гутал rot','Гутал gold'],acc:['Keins','Хадаг (Schal)','Ohrringe','Gürtelmesser','Соёмбо-Kette']};
+var LB={hair:'💇 Haare',deel:'👘 Деел (Tracht)',hat:'🎩 Kopfbedeckung',boots:'👢 Schuhe',acc:'💎 Accessoires'};
+var DC=['#2b7de9','#c62828','#2e7d32','#d99a00','#6a1b9a'],BC=['#6d4c41','#222','#b71c1c','#c9a227'],SK=['#f6d5b5','#e8b88f','#c68e63'];
+function ul(){var n=0,k,j;for(k in REQ)for(j=0;j<REQ[k].length;j++)if(S.pts>=REQ[k][j])n++;return n}
+function hdr(){$('hp').innerHTML='⭐ '+S.pts+' · 💰 '+(S.pts/100).toFixed(2).replace('.',',')+' €'}
+function addPts(n){var b=ul();S.pts+=n;hdr();if(ul()>b)toast('🎁 Neues Avatar-Teil freigeschaltet!')}
+function mark(id){var c=S.ok[id]||0;S.ok[id]=c+1;if(c==1){addPts(10);toast('🎓 Neues Wort gelernt! +10 Punkte (10 Cent)');return true}return false}
+hdr();
+function av(a,h){var d=DC[a.deel],s=SK[a.skin],B=BC[a.boots],H='#1b1b1b',i,x='<svg viewBox="0 -14 120 196" height="'+h+'" xmlns="http://www.w3.org/2000/svg">';
+x+='<g fill="'+B+'"><path d="M30 160h24v12c0 4-3 6-8 6H30c-4 0-6-3-3-6z"/><path d="M90 160H66v12c0 4 3 6 8 6h16c4 0 6-3 3-6z"/></g>';
+x+='<path d="M34 70Q60 60 86 70L96 162H24Z" fill="'+d+'"/><path d="M60 64L88 104M48 64L60 80L72 64" stroke="#f2c14e" stroke-width="3" fill="none"/>';
+x+='<path d="M34 72L16 118h16l10-36zM86 72L104 118H88L78 82z" fill="'+d+'"/><circle cx="24" cy="121" r="6" fill="'+s+'"/><circle cx="96" cy="121" r="6" fill="'+s+'"/>';
+x+='<rect x="30" y="108" width="60" height="9" fill="'+(a.acc==3?'#f2c14e':'#c62828')+'"/>';
+if(a.acc==3)x+='<rect x="76" y="104" width="4" height="18" fill="#555"/>';
+for(i=0;i<5;i++)x+='<circle cx="'+(34+i*13)+'" cy="152" r="2.5" fill="#f2c14e"/>';
+if(a.acc==1)x+='<path d="M52 66L47 132h9L66 66z" fill="#3ec5ff"/>';
+if(a.acc==4)x+='<circle cx="60" cy="88" r="5" fill="#f2c14e"/><path d="M60 82v12M54 88h12" stroke="#c62828"/>';
+if(a.hair==1)x+='<path d="M38 48Q30 80 36 98M82 48Q90 80 84 98" stroke="'+H+'" stroke-width="7" fill="none" stroke-linecap="round"/>';
+if(a.hair==3)x+='<path d="M36 40v52h10V50zM84 40v52H74V50z" fill="'+H+'"/>';
+x+='<rect x="54" y="60" width="12" height="10" fill="'+s+'"/><circle cx="60" cy="45" r="22" fill="'+s+'"/>';
+x+='<circle cx="52" cy="46" r="2.3" fill="#222"/><circle cx="68" cy="46" r="2.3" fill="#222"/><path d="M53 54Q60 60 67 54" stroke="#a33" fill="none" stroke-width="2"/><circle cx="47" cy="52" r="3.5" fill="#f48" opacity=".3"/><circle cx="73" cy="52" r="3.5" fill="#f48" opacity=".3"/>';
+x+='<path d="M38 44a22 22 0 0 1 44 0Q60 32 38 44z" fill="'+H+'"/>';
+if(a.hair==2)x+='<circle cx="60" cy="20" r="9" fill="'+H+'"/>';
+if(a.acc==2)x+='<circle cx="38" cy="53" r="3" fill="#f2c14e"/><circle cx="82" cy="53" r="3" fill="#f2c14e"/>';
+if(a.hat==1)x+='<ellipse cx="60" cy="30" rx="30" ry="6" fill="#1565c0"/><path d="M42 30Q60 2 78 30z" fill="#1565c0" stroke="#f2c14e" stroke-width="2"/><circle cx="60" cy="6" r="3.5" fill="#c62828"/>';
+if(a.hat==2)x+='<rect x="36" y="22" width="48" height="14" rx="7" fill="#6d4c41"/><path d="M40 24Q60 -2 80 24z" fill="#8d6e63"/>';
+if(a.hat==3)x+='<path d="M38 32L60 -12L82 32z" fill="#d99a00"/><circle cx="60" cy="-12" r="3.5" fill="#c62828"/><path d="M38 32h44" stroke="#c62828" stroke-width="3"/>';
+return x+'</svg>'}
+function renderAv(){var h='<div class="card c">'+av(S.av,230)+'<div class="ph">Punkte schalten neue Teile frei – du gibst nichts aus!</div></div>',k,j,L;
+h+='<div class="card"><b>Hautton</b><br>';for(j=0;j<3;j++)h+='<span class="chip'+(S.av.skin==j?' on':'')+'" data-k="skin" data-j="'+j+'" style="background:'+SK[j]+'">&nbsp;&nbsp;&nbsp;</span>';h+='</div>';
+for(k in REQ){h+='<div class="card"><b>'+LB[k]+'</b><br>';for(j=0;j<REQ[k].length;j++){L=S.pts<REQ[k][j];h+='<span class="chip'+(S.av[k]==j?' on':'')+(L?' lk':'')+'" data-k="'+k+'" data-j="'+j+'">'+(L?'🔒 '+REQ[k][j]+' P':NM[k][j])+'</span>'}h+='</div>'}
+$('avv').innerHTML=h}
+$('avv').onclick=function(e){var t=e.target,k=t.getAttribute&&t.getAttribute('data-k');if(!k)return;var j=+t.getAttribute('data-j');if(k!='skin'&&S.pts<REQ[k][j]){toast('Noch '+(REQ[k][j]-S.pts)+' Punkte bis zur Freischaltung');return}S.av[k]=j;save();renderAv()};
+/* Sprachausgabe */
+function say(t,l){var ss=window.speechSynthesis;if(!ss||!window.SpeechSynthesisUtterance){toast('Keine Sprachausgabe auf diesem Gerät');return}
+var v=ss.getVoices(),pk=function(p){for(var i=0;i<v.length;i++)if(v[i].lang&&v[i].lang.toLowerCase().replace('_','-').indexOf(p)==0)return v[i]},vo=pk(l),u=new SpeechSynthesisUtterance(t);
+if(l=='mn'&&!vo){vo=pk('ru');u.lang='ru-RU';toast('Keine mongolische Stimme – russische Näherung. Besser: mit 🎤 selbst aufnehmen')}else u.lang=l=='mn'?'mn-MN':'de-DE';
+if(vo)u.voice=vo;u.rate=.85;ss.cancel();ss.speak(u)}
+var REC={},DB=null,RC=null;
+function dbo(cb){if(DB)return cb(DB);try{var r=indexedDB.open('mongolrec',1);r.onupgradeneeded=function(){r.result.createObjectStore('r')};r.onsuccess=function(){DB=r.result;cb(DB)};r.onerror=function(){cb(null)}}catch(e){cb(null)}}
+dbo(function(d){if(!d)return;var q=d.transaction('r').objectStore('r').openCursor();q.onsuccess=function(){var c=q.result;if(c){REC[c.key]=c.value;c['continue']()}}});
+function speakMn(w){if(REC[w.id]){try{new Audio(REC[w.id]).play()}catch(e){}return}say(w.m.split(' / ')[0],'mn')}
+function recToggle(w,t){if(RC){recStop(t);return}
+var md=navigator.mediaDevices,AC=window.AudioContext||window.webkitAudioContext;
+if(!md||!md.getUserMedia||!AC){toast('Aufnahme hier nicht möglich. iPhone: in Safari öffnen statt als Home-Bildschirm-App (iOS 12).');return}
+md.getUserMedia({audio:true}).then(function(st){var ac=new AC(),src=ac.createMediaStreamSource(st),pr=ac.createScriptProcessor(4096,1,1),b=[];pr.onaudioprocess=function(e){b.push(new Float32Array(e.inputBuffer.getChannelData(0)))};src.connect(pr);pr.connect(ac.destination);RC={st:st,ac:ac,pr:pr,src:src,b:b,w:w};t.innerHTML='⏹';toast('🎤 Aufnahme läuft – nochmal tippen zum Speichern')})['catch'](function(){toast('Mikrofon nicht erlaubt')})}
+function recStop(t){var r=RC;RC=null;r.pr.disconnect();r.src.disconnect();r.st.getTracks().forEach(function(x){x.stop()});
+var n=0,i,o=0;for(i=0;i<r.b.length;i++)n+=r.b[i].length;var f=r.ac.sampleRate/16000,m=Math.floor(n/f),all=new Float32Array(n);
+for(i=0;i<r.b.length;i++){all.set(r.b[i],o);o+=r.b[i].length}
+var buf=new ArrayBuffer(44+m*2),v=new DataView(buf);
+function ws(p,s){for(var j=0;j<s.length;j++)v.setUint8(p+j,s.charCodeAt(j))}
+ws(0,'RIFF');v.setUint32(4,36+m*2,true);ws(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,16000,true);v.setUint32(28,32000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);ws(36,'data');v.setUint32(40,m*2,true);
+for(i=0;i<m;i++){var s=Math.max(-1,Math.min(1,all[Math.floor(i*f)]));v.setInt16(44+i*2,s<0?s*32768:s*32767,true)}
+try{r.ac.close()}catch(e){}
+if(m<3200){toast('Zu kurz – nochmal versuchen');t.innerHTML='🎤';return}
+var u=new Uint8Array(buf),bs='';for(i=0;i<u.length;i+=8192)bs+=String.fromCharCode.apply(null,u.subarray(i,i+8192));
+var uri='data:audio/wav;base64,'+btoa(bs);REC[r.w.id]=uri;t.innerHTML='🎙️';dbo(function(d){if(d)d.transaction('r','readwrite').objectStore('r').put(uri,r.w.id)});toast('✅ Gespeichert! 🔊 spielt jetzt deine Aufnahme.')}
+document.addEventListener('click',function(e){var t=e.target,id=t.getAttribute&&t.getAttribute('data-i');if(!t.className||String(t.className).indexOf('sp')<0||id==null)return;var w=WM[id],l=t.getAttribute('data-l');
+if(l=='de')say(w.d,'de');else if(l=='mn')speakMn(w);else if(l=='rec')recToggle(w,t)});
+/* Tabs */
+var btns=$('nav').getElementsByTagName('button');
+function tab(n){for(var i=0;i<5;i++){btns[i].className=i==n?'on':'';$('v'+i).className='v'+(i==n?' on':'')}$('main').scrollTop=0;if(n==4)stats();if(n==3)renderAv();if(n==1&&!Q.on)qMenu();if(n==2&&!cur)nextW()}
+for(i=0;i<5;i++)(function(n){btns[n].onclick=function(){tab(n)}})(i);
+$('hd').onclick=function(){var m=$('main');(function s(){m.scrollTop=Math.floor(m.scrollTop*.55);if(m.scrollTop>1)requestAnimationFrame(s)})()};
+/* Wörter */
+var shown=0,res=[];
+function render(more){if(!more){shown=0;$('list').innerHTML=''}
+var h='',e=Math.min(res.length,shown+60);for(var i=shown;i<e;i++){var w=res[i];h+='<div class="card"><div class="de">'+w.i+' '+esc(w.d)+' <span class="sp" data-i="'+w.id+'" data-l="de">🔊</span></div><div class="mn">'+esc(w.m)+' <span class="sp" data-i="'+w.id+'" data-l="mn">🔊</span><span class="sp" data-i="'+w.id+'" data-l="rec">'+(REC[w.id]?'🎙️':'🎤')+'</span></div><div class="ph">'+esc(w.p)+'</div></div>'}
+$('list').insertAdjacentHTML('beforeend',h);shown=e;$('more').style.display=shown<res.length?'block':'none'}
+function filt(){var c=$('cat0').value,q=$('q').value.toLowerCase(),p=pool(c);res=[];for(var i=0;i<p.length;i++)if(!q||p[i].d.toLowerCase().indexOf(q)>-1||p[i].m.toLowerCase().indexOf(q)>-1||p[i].p.toLowerCase().indexOf(q)>-1)res.push(p[i]);render(false)}
+$('cat0').onchange=filt;$('q').oninput=filt;$('more').onclick=function(){render(true)};filt();
+/* Punkte */
+var LV=[[0,'🐣','Kleiner Entdecker'],[100,'🐥','Wort-Sammler'],[300,'🐴','Steppenreiter'],[800,'🦅','Adlerauge'],[1500,'🐺','Blauer Wolf'],[3000,'👑','Khan der Wörter']];
+function stats(){var l=0,n=0,k;for(k in S.ok)if(S.ok[k]>=2)n++;for(var i=0;i<LV.length;i++)if(S.pts>=LV[i][0])l=i;
+var nx=LV[l+1],pc=nx?Math.round((S.pts-LV[l][0])/(nx[0]-LV[l][0])*100):100;
+$('pts').innerHTML='<div class="card c">'+av(S.av,120)+'<h3>Stufe '+(l+1)+' · '+LV[l][1]+' '+LV[l][2]+'</h3><div class="big">'+S.pts+' Punkte</div><div class="bar"><i style="width:'+pc+'%"></i></div><p>'+(nx?'Noch '+(nx[0]-S.pts)+' Punkte bis '+nx[1]:'Höchste Stufe! 🎉')+'</p></div><div class="card">✅ Gelernte Wörter: <b>'+n+'</b> / '+W.length+'<br>💰 Lernwert: <b>'+(S.pts/100).toFixed(2).replace('.',',')+' €</b> (10 Punkte = 10 Cent)<br>🔥 Beste Serie: <b>'+S.best+'</b><br>🎯 Quiz-Runden: <b>'+S.rounds+'</b><br>📅 Tage in Folge: <b>'+S.ds+'</b><br>🎁 Avatar-Teile: <b>'+ul()+'</b></div><button class="btn" id="bk">💾 Fortschritt sichern (Code)</button><button class="btn l" id="rt">📥 Fortschritt laden</button><div id="bx"></div><button class="btn r" id="rs">Fortschritt zurücksetzen</button>';
+$('bk').onclick=function(){var c=btoa(unescape(encodeURIComponent(JSON.stringify(S))));$('bx').innerHTML='<textarea id="bt" rows="5" style="width:100%">'+c+'</textarea><p class="ph">Code kopieren und sicher aufbewahren (z. B. in Notizen). Eigene Aufnahmen sind nicht enthalten.</p>';$('bt').select()};
+$('rt').onclick=function(){$('bx').innerHTML='<textarea id="bt" rows="4" style="width:100%" placeholder="Code hier einfügen"></textarea><button class="btn g" id="go">Wiederherstellen</button>';$('go').onclick=function(){try{var o=JSON.parse(decodeURIComponent(escape(atob($('bt').value.replace(/\s/g,'')))));if(typeof o.pts!='number')throw 0;S=o;if(!S.bad)S.bad={};if(!S.av)S.av={skin:0,hair:0,deel:0,hat:0,boots:0,acc:0};save();hdr();stats();toast('✅ Fortschritt geladen')}catch(e){toast('Code ungültig')}}};
+$('rs').onclick=function(){if(confirm('Alle Punkte löschen?')){S={pts:0,best:0,ok:{},rounds:0,bad:{},day:'',ds:0,av:{skin:0,hair:0,deel:0,hat:0,boots:0,acc:0}};save();hdr();stats()}}}
+/* Quiz */
+var Q={on:false},tm=null;
+function qMenu(){clearInterval(tm);Q.on=false;$('quiz').innerHTML='<div class="card c"><div style="font-size:46px">⭐</div><p>Punkte, Serien-Boni &amp; <b>+10</b> für jedes neu gelernte Wort!</p></div><button class="btn" data-m="1">⭐ Klassik · 10 Fragen</button><button class="btn o" data-m="2">⏱ Zeitduell · 12 Sek. pro Frage</button><button class="btn r" data-m="3">❤️ Überleben · 3 Leben, endlos</button><button class="btn g" data-m="4">🔁 Schwierige Wörter üben</button>'}
+$('quiz').onclick=function(e){var t=e.target,m=t.getAttribute&&t.getAttribute('data-m');if(m)qStart(+m);var o=t.getAttribute&&t.getAttribute('data-o');if(o!=null)qAns(+o)};
+function qStart(m){var p=pool($('cat1').value),h=[],i,ord=[];if(p.length<4){alert('Zu wenige Wörter');return}
+for(i=0;i<p.length;i++)h.push({w:p[i],s:Math.random()-(S.bad[p[i].id]||0)*.4+(S.ok[p[i].id]||0)*.15});
+h.sort(function(x,y){return x.s-y.s});for(i=0;i<h.length;i++)ord.push(h[i].w);
+if(m==4){ord=[];for(i=0;i<p.length;i++)if(S.bad[p[i].id]>0)ord.push(p[i]);if(!ord.length){toast('Noch keine schwierigen Wörter – spiel erst eine Runde!');return}ord=shuf(ord)}
+Q={on:true,m:m==4?1:m,n:0,ok:0,sc:0,st:0,lv:3,p:p,set:ord.slice(0,m==3?ord.length:10)};qNext()}
+function qNext(){clearInterval(tm);Q.lock=0;if(Q.n>=Q.set.length||(Q.m==3&&Q.lv<=0)){Q.on=false;S.rounds++;save();$('quiz').innerHTML='<div class="card c"><div style="font-size:48px">'+(Q.ok>=8||Q.m==3&&Q.ok>=10?'🏆':Q.ok>=5?'👍':'💪')+'</div><div class="big">'+Q.ok+' richtig</div><div class="big" style="color:#ff9f1c">+'+Q.sc+' Punkte</div></div><button class="btn" id="ag">Nochmal</button>';$('ag').onclick=qMenu;return}
+var w=Q.set[Q.n],dir=Math.random()<.5?1:2,o=[w],seen={},k=shuf(Q.p),c,i;seen[dir==1?w.m:w.d]=1;
+for(i=0;i<k.length&&o.length<4;i++){c=dir==1?k[i].m:k[i].d;if(!seen[c]){seen[c]=1;o.push(k[i])}}
+Q.w=w;Q.o=shuf(o);var hs='';if(Q.m==3)for(i=0;i<3;i++)hs+=i<Q.lv?'❤️':'🖤';
+var h='<div class="c">'+(Q.m==3?hs+' · ':'Frage '+(Q.n+1)+'/'+Q.set.length+' · ')+'🔥 '+Q.st+' · ⭐ '+Q.sc+'</div>'+(Q.m==2?'<div class="bar"><i id="tb" style="width:100%;background:#ff9f1c"></i></div>':'')+'<div class="card c"><div class="big">'+(dir==1?w.i+' '+esc(w.d):esc(w.m))+'</div><div class="ph">'+(dir==1?'Was heißt das auf Mongolisch?':'Was heißt das auf Deutsch?')+'</div></div>';
+for(i=0;i<Q.o.length;i++)h+='<button class="opt" data-o="'+i+'">'+esc(dir==1?Q.o[i].m:Q.o[i].d)+'</button>';
+$('quiz').innerHTML=h;
+if(Q.m==2){Q.t=12000;Q.t0=Date.now();tm=setInterval(function(){var r=Q.t-(Date.now()-Q.t0),b=$('tb');if(b)b.style.width=Math.max(0,r/Q.t*100)+'%';if(r<=0)qAns(-1)},100)}}
+function qAns(i){if(Q.lock)return;Q.lock=1;clearInterval(tm);var w=Q.w,ok=i>=0&&Q.o[i]===w,bs=$('quiz').getElementsByClassName('opt'),j;
+for(j=0;j<bs.length;j++)if(Q.o[j]===w)bs[j].className='opt ok';
+if(ok){Q.st++;Q.ok++;if(S.bad[w.id]>0)S.bad[w.id]--;var g=10+Math.min(Q.st-1,5)*2;if(Q.m==2)g+=Math.ceil(Math.max(0,Q.t-(Date.now()-Q.t0))/3000);Q.sc+=g;addPts(g);if(Q.st>S.best)S.best=Q.st;if(!mark(w.id)&&(Q.st==3||Q.st==5||Q.st==10))toast('🔥 '+Q.st+'er Serie!');vib(30)}
+else{if(i>=0)bs[i].className='opt no';S.bad[w.id]=(S.bad[w.id]||0)+1;Q.st=0;if(Q.m==3)Q.lv--;vib([80,40,80])}
+save();Q.n++;setTimeout(qNext,ok?650:1500)}
+/* Schreiben */
+var cur=null,gx,cx,dr=false,guide=true,hand=false,CH=230;
+function nextW(){var p=pool($('cat2').value);cur=p[Math.floor(Math.random()*p.length)];
+$('wr').innerHTML='<div class="card c"><div class="de">'+cur.i+' '+esc(cur.d)+' <span class="sp" data-i="'+cur.id+'" data-l="de">🔊</span> <span class="sp" data-i="'+cur.id+'" data-l="mn">🇲🇳</span><span class="sp" data-i="'+cur.id+'" data-l="rec">'+(REC[cur.id]?'🎙️':'🎤')+'</span></div><div class="ph">'+esc(cur.p)+'</div></div><div class="cw" id="cw"><canvas id="gc"></canvas><canvas id="cv"></canvas></div><div class="row"><button class="btn l" id="cl">🧽 Löschen</button><button class="btn o" id="gd"></button><button class="btn" id="ft"></button></div><div class="row"><button class="btn g" id="ok">✔ Richtig (+5)</button><button class="btn r" id="no">✖ Nochmal</button></div><button class="btn" id="nx">Nächstes Wort ›</button>';
+var cv=$('cv'),gc=$('gc'),d=window.devicePixelRatio||1,w=$('cw').clientWidth;
+gc.width=cv.width=w*d;gc.height=cv.height=CH*d;gx=gc.getContext('2d');cx=cv.getContext('2d');gx.scale(d,d);cx.scale(d,d);
+cx.lineWidth=5;cx.lineCap='round';cx.lineJoin='round';cx.strokeStyle='#1e293b';cur.w=w;btn();drawGuide();
+function pos(e){var t=e.touches?e.touches[0]:e,b=cv.getBoundingClientRect();return[t.clientX-b.left,t.clientY-b.top]}
+function dn(e){e.preventDefault();dr=true;var p=pos(e);cx.beginPath();cx.moveTo(p[0],p[1]);cx.lineTo(p[0]+.1,p[1]);cx.stroke()}
+function mv(e){if(!dr)return;e.preventDefault();var p=pos(e);cx.lineTo(p[0],p[1]);cx.stroke();cx.beginPath();cx.moveTo(p[0],p[1])}
+function up(){dr=false}
+cv.addEventListener('touchstart',dn,false);cv.addEventListener('touchmove',mv,false);cv.addEventListener('touchend',up,false);
+cv.addEventListener('mousedown',dn,false);cv.addEventListener('mousemove',mv,false);window.addEventListener('mouseup',up,false);
+$('cl').onclick=$('no').onclick=function(){cx.save();cx.setTransform(1,0,0,1,0,0);cx.clearRect(0,0,cv.width,cv.height);cx.restore()};
+$('gd').onclick=function(){guide=!guide;btn();drawGuide()};
+$('ft').onclick=function(){hand=!hand;btn();drawGuide()};
+$('nx').onclick=nextW;
+$('ok').onclick=function(){addPts(5);mark(cur.id);save();nextW()}}
+function btn(){$('gd').innerHTML=guide?'👁 Hilfe aus':'👁 Hilfe an';$('ft').innerHTML=hand?'✒️ Handschrift':'🅰️ Druckschrift'}
+function drawGuide(){var w=cur.w,f=hand?'italic ':'bold ',fam=hand?'"Times New Roman",Georgia,serif':'Helvetica,Arial,sans-serif',s=84;gx.clearRect(0,0,w,CH);if(!guide)return;
+gx.font=f+s+'px '+fam;while(gx.measureText(cur.m).width>w-20&&s>16){s-=4;gx.font=f+s+'px '+fam}
+gx.fillStyle='rgba(43,125,233,.22)';gx.textAlign='center';gx.textBaseline='middle';gx.fillText(cur.m,w/2,CH/2)}
+$('cat2').onchange=nextW;
+function ymd(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+function daily(){var n=new Date(),d=ymd(n);if(S.day==d)return;S.ds=(S.day==ymd(new Date(n.getTime()-864e5)))?S.ds+1:1;S.day=d;var b=Math.min(S.ds,7)*5;addPts(b);save();toast('📅 Tag '+S.ds+' in Folge! +'+b+' Punkte')}
+setTimeout(daily,700);
+}
+/*LOADER*/
+function get(u,cb){var x=new XMLHttpRequest();x.open('GET',u,true);x.onload=function(){cb(x.status<400?x.responseText:'')};x.onerror=function(){cb('')};x.send()}
+var TR={а:'a',б:'b',в:'w',г:'g',д:'d',е:'je',ё:'jo',ж:'dsch',з:'s',и:'i',й:'i',к:'k',л:'l',м:'m',н:'n',о:'o',ө:'ö',п:'p',р:'r',с:'s',т:'t',у:'u',ү:'ü',ф:'f',х:'ch',ц:'z',ч:'tsch',ш:'sch',ъ:'',ы:'i',ь:'',э:'e',ю:'ju',я:'ja'};
+function trans(s){var o='',i,c;s=s.toLowerCase();for(i=0;i<s.length;i++){c=s.charAt(i);o+=TR.hasOwnProperty(c)?TR[c]:c}return o.charAt(0).toUpperCase()+o.slice(1)}
+function hid(s){var h=5381,i;for(i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return(h>>>0).toString(36)}
+function trim(s){return s.replace(/^\s+|\s+$/g,'')}
+function parse(L,txt){var c=[],w=[],seen={},f,k,ls,l,p,m,de,mn,ph,ci,key,cat='Allgemein';
+for(f=0;f<L.length;f++){ls=(txt[L[f]]||'').split(/\r?\n/);for(k=0;k<ls.length;k++){l=trim(ls[k]);if(!l||l.indexOf('//')==0)continue;
+if(l.charAt(0)=='#'){cat=trim(l.replace(/^#+/,''));continue}
+p=l.split('|');if(p.length<2)continue;m=/^([^A-Za-zÄÖÜäöüß0-9„"(]*)([\s\S]*)$/.exec(trim(p[0]));
+de=trim(m[2]);mn=trim(p[1]);ph=p[2]&&trim(p[2])?trim(p[2]):trans(mn);if(!de||!mn)continue;
+key=hid(de+'|'+mn);if(seen[key])continue;seen[key]=1;ci=c.indexOf(cat);if(ci<0){c.push(cat);ci=c.length-1}w.push([ci,trim(m[1]),de,mn,ph])}}
+return{c:c,w:w}}
+get('words/index.json',function(t){var L=[];try{L=JSON.parse(t)}catch(e){}
+if(!L.length){document.body.innerHTML='<p style="padding:20px">Wörter konnten nicht geladen werden. Bitte einmal mit Internet öffnen.</p>';return}
+var n=L.length,txt={};L.forEach(function(f){get('words/'+f,function(x){txt[f]=x;if(--n==0){DATA=parse(L,txt);boot()}})})});
+if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js')['catch'](function(){})});
+</script></body></html>
